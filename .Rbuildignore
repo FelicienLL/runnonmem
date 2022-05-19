@@ -3,3 +3,4 @@
 ^LICENSE\.md$
 ^R/draft\.R$
 ^draft\.R$
+^README\.Rmd$

@@ -1,6 +1,6 @@
 Package: runnonmem
 Title: Run NONMEM from R
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: person(given = "Felicien", family = "Le Louedec", role = c("aut", "cre"), email = "lelouedec.felicien@iuct-oncopole.fr")
 Description: Run NONMEM from R. 
 License: GPL (>= 3)
