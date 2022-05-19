@@ -13,24 +13,27 @@
 #' @examples
 #' \dontrun{
 #' # First, define where is NONMEM is installed
-#' nmbat <- "C:/nmXXg64/util/nmfeXX.bat"
+#' options(runnonmem_nmfe_location = "C:/nmXXXXX/util/nmfeXX.bat")
 #'
 #' # Then launch a run
 #' # If the control stream is in the working directory, just execute
-#' runnonmem("mod001.mod", nmfe_location = nmbat)
+#' runnonmem("mod001.mod")
 #'
 #' # Or specify the project directory apart
-#' runnonmem("mod001.mod", "/my/working/directory" nmfe_location = nmbat)
+#' runnonmem("mod001.mod", "/my/working/directory")
 #'
 #' # Or full path to model object
-#' runnonmem(file = "/my/working/directory.mod001.mod", nmfe_location = nmbat)
+#' runnonmem(file = "C:/my/working/directory.mod001.mod")
 #' }
 #'
 #'
 runnonmem <- function(name,
                       dir = getwd(),
                       file = NULL,
-                      nmfe_location = "C:/nm74g64/util/nmfe74.bat"){
+                      nmfe_location = getOption("runnonmem_nmfe_location")){
+  if(is.null(nmfe_location)){
+    stop("Please set the location of the `nmfeXX.bat` script.")
+  }
   if(!file.exists(nmfe_location)) stop(paste("Cannot find", nmfe_location))
   mod_ <- mod(name = name, dir = dir, file = file)
   if(!file.exists(mod_)) stop(paste("Cannot find", mod_))

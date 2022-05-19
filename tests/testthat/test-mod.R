@@ -20,7 +20,6 @@ test_that("bat works", {
 
   bat2 <- bat()
   expect_false(bat==bat2)
-
 })
 
 test_that("getdisk works", {

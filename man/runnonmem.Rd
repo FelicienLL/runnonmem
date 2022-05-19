@@ -8,7 +8,7 @@ runnonmem(
   name,
   dir = getwd(),
   file = NULL,
-  nmfe_location = "C:/nm74g64/util/nmfe74.bat"
+  nmfe_location = getOption("runnonmem_nmfe_location")
 )
 }
 \arguments{
@@ -29,17 +29,17 @@ Run NONMEM from R. Creates a \code{.bat} file in a temporary directory and execu
 \examples{
 \dontrun{
 # First, define where is NONMEM is installed
-nmbat <- "C:/nmXXg64/util/nmfeXX.bat"
+options(runnonmem_nmfe_location = "C:/nmXXXXX/util/nmfeXX.bat")
 
 # Then launch a run
 # If the control stream is in the working directory, just execute
-runnonmem("mod001.mod", nmfe_location = nmbat)
+runnonmem("mod001.mod")
 
 # Or specify the project directory apart
-runnonmem("mod001.mod", "/my/working/directory" nmfe_location = nmbat)
+runnonmem("mod001.mod", "/my/working/directory")
 
 # Or full path to model object
-runnonmem(file = "/my/working/directory.mod001.mod", nmfe_location = nmbat)
+runnonmem(file = "C:/my/working/directory.mod001.mod")
 }
 
 
