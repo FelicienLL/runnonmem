@@ -1,20 +1,53 @@
-runnonmem <- function(name, dir = getwd(), file = NULL, nonmem_location = "C:/nm74g64/util/nmfe74.bat"){
-  if(!file.exists(nonmem_location)) stop(paste("Cannot find", nonmem_location))
+#' Run NONMEM
+#'
+#' @description Run NONMEM from R. Creates a `.bat` file in a temporary directory and executes it from R.
+#'
+#' @param name name of the model to run located in `dir`. Accepted extension are: ".mod", ".ctl" and ".txt"
+#' @param dir project directory where the file in `name` is and where `NONMEM` will be executed
+#' @param file full name file with directory, alternative to `name` and `dir` arguments.
+#' @param nmfe_location location of the `nmfeXX.bat` script, usually available in the NONMEM installation directory
+#'
+#' @return call for side effects. Open a shell where NONMEM runs
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # First, define where is NONMEM is installed
+#' nmbat <- "C:/nmXXg64/util/nmfeXX.bat"
+#'
+#' # Then launch a run
+#' # If the control stream is in the working directory, just execute
+#' runnonmem("mod001.mod", nmfe_location = nmbat)
+#'
+#' # Or specify the project directory apart
+#' runnonmem("mod001.mod", "/my/working/directory" nmfe_location = nmbat)
+#'
+#' # Or full path to model object
+#' runnonmem(file = "/my/working/directory.mod001.mod", nmfe_location = nmbat)
+#' }
+#'
+#'
+runnonmem <- function(name,
+                      dir = getwd(),
+                      file = NULL,
+                      nmfe_location = "C:/nm74g64/util/nmfe74.bat"){
+  if(!file.exists(nmfe_location)) stop(paste("Cannot find", nmfe_location))
   mod_ <- mod(name = name, dir = dir, file = file)
-  cmd_ <- cmd(modelfile = mod_, nonmem = nonmem_location)
+  if(!file.exists(mod_)) stop(paste("Cannot find", mod_))
+  mod_ <- normalizePath(mod_)
+  cmd_ <- cmd(modelfile = mod_, nonmem = nmfe_location)
   bat_ <- bat()
   write_bat(command = cmd_, batfile = bat_)
   shell.exec(bat_)
 }
 
 mod <- function(name, dir = getwd(), file = NULL){
-  if(is.null(file)){
+  mod_ <- file
+  if(is.null(mod_)){
     if(missing(name)) stop("'name' argument is missing.")
-    file <- file.path(dir, name)
+    mod_ <- file.path(dir, name)
   }
-  if(!file.exists(file)) stop(paste("Cannot find", file))
-  file <- normalizePath(file)
-  file
+  mod_
 }
 
 cmd <- function(modelfile, nonmem){
@@ -22,14 +55,8 @@ cmd <- function(modelfile, nonmem){
   dir_ <- dirname(modelfile)
   mod_ <- basename(modelfile)
   lst_ <- lst(mod_)
-
   paste(disk_, "& cd", tick(dir_), "& CALL", tick(nonmem), mod_, lst_, "& pause")
 }
-# testthat::expect_equal(
-#   cmd(modelfile = "Y:/PK-LE-LOUEDEC-FELICIEN/nm001/run001.mod", nonmem = "C:/nm74g64/util/nmfe74.bat"),
-#   'Y: & cd "Y:/PK-LE-LOUEDEC-FELICIEN/nm001" & CALL "C:/nm74g64/util/nmfe74.bat" run001.mod run001.lst & pause'
-# )
-
 
 bat <- function(){
   random <- paste0(sample(c(letters,0:9), 10, T), collapse = "")
@@ -45,28 +72,18 @@ write_bat <- function(command, batfile){
   close(fileConn)
 }
 
-
-
 getdisk <- function(x){
   d <- strsplit(x, split = ":")[[1]][1]
+  if(x==d) return(NA_character_)
   paste0(d,":")
 }
 
-getdisk("C:/blabla")
-
-
-lst <- function(x, extention = "mod$|ctl$|txt$"){
-  gsub(extention, "lst", x)
+lst <- function(x, extension = "mod$|ctl$|txt$"){
+  lst <- gsub(extension, "lst", x)
+  if(x==lst) stop("Cannot create .lst file name. Supported extensions are: .mod, .ctl, .txt.")
+  lst
 }
-
-gsub("mod", "lst", "run001.mod")
-gsub("mod$", "lst", "mod001.mod")
-gsub("mod$|ctl$", "lst", "mod001.mod")
-gsub("mod$|ctl$|txt$", "lst", "ctl001.ctl")
-
-
 
 tick <- function(x){
   paste0("\"", x, "\"")
 }
-tick("C:/hello")
