@@ -9,7 +9,8 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The goal of runnonmem is to run NONMEM from R.
+The goal of runnonmem is to run NONMEM from R. Developed and tested on a
+Windows environment.
 
 ## Installation
 
